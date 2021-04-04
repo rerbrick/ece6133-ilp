@@ -12,7 +12,7 @@ import sys # for command line argument
 #
 # Expects user to enter only one valid file name.
 ###
-def get_file():
+def open_file():
     global benchmark # global variable for reading the file
     file_name = sys.argv[1] # get name of benchmark file
     # add benchmark directory to file path
@@ -23,6 +23,20 @@ def get_file():
     except IOError:
         # the file could not be found
         print("Error: File does not appear to exist.")
-        return # exit the function
-    print("File was successfully opened.")
-    benchmark.close() # close the file
+        return False # file could not be opened
+    print("Benchmark file was opened.")
+    return True # file was opened
+
+###
+# Closes the benchmark file
+###
+def close_file():
+    global benchmark # add benchmark variable to function scope
+    try:
+        benchmark.close()
+    except IOError:
+        # there was an error while closing the file
+        print("Error: File could not be closed.")
+        return False # file wasn't successfully closed
+    print("Benchmark file was closed.")
+    return True # file was closed
