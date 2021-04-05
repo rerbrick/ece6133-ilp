@@ -1,12 +1,15 @@
 # file_parser.py
 
 ###
-# Contains functions for opening a user-specified file
+# Contains functions for opening a user-specified file, parsing the file for
+# chip constraints, and closing the benchmark file
 ###
 
 import sys # for command line argument
 
+# hard_modules = [width, height]
 hard_modules = [] # global list of hard modules
+# soft_modules = [area, aspect_ratio_min, aspect_ratio_max]
 soft_modules = [] # global list of soft modules
 
 ###
