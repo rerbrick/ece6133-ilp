@@ -6,10 +6,7 @@
 ###
 
 import sys # for command line argument
-from soft_module import * # import all functions from soft_module.py
-
-# hard_modules = [width, height]
-hard_modules = [] # global list of hard modules
+from file_generator import * # import all functions from soft_module.py
 
 ###
 # Gets the file name given by the user, adds the directory to the file path,
