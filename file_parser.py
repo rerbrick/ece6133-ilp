@@ -84,5 +84,4 @@ def read_file():
                 soft_modules.append(temp_list)
         else:
             pass # go on to the next line
-                
             
