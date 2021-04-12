@@ -6,11 +6,10 @@
 ###
 
 import sys # for command line argument
+from soft_module import * # import all functions from soft_module.py
 
 # hard_modules = [width, height]
 hard_modules = [] # global list of hard modules
-# soft_modules = [area, aspect_ratio_min, aspect_ratio_max]
-soft_modules = [] # global list of soft modules
 
 ###
 # Gets the file name given by the user, adds the directory to the file path,
