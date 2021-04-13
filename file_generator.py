@@ -74,22 +74,22 @@ def generate_lp():
         n = m + 1 # number of subsequent module
         while n <= var.hard_num:
             # non-overlap constraint for all subsequent modules
-            tmp = ("x{} + {} <= x{} + {}x{}{} + {}y{}{};"
+            tmp = ("x{} + {} <= x{} + {} x{}{} + {} y{}{};"
                    .format(m, var.hard_modules[mod][0], n, W_max, m, n, W_max, 
                            m, n))
             # add constraint to output file
             output.write(tmp + "\n")
-            tmp = ("x{} - {} >= x{} - {} + {}x{}{} - {}y{}{};"
+            tmp = ("x{} - {} >= x{} - {} + {} x{}{} - {} y{}{};"
                    .format(m, var.hard_modules[mod + 1][0], n, W_max, W_max, m, 
                            n, W_max, m, n))
             # add constraint to output file
             output.write(tmp + "\n")
-            tmp = ("y{} + {} <= y{} + {} + {}x{}{} - {}y{}{};"
+            tmp = ("y{} + {} <= y{} + {} + {} x{}{} - {} y{}{};"
                    .format(m, var.hard_modules[mod][1], n, H_max, H_max, m, n, 
                            H_max, m, n))
             # add constraint to output file
             output.write(tmp + "\n")
-            tmp = ("y{} - {} >= y{} - {} + {}x{}{} + {}y{}{};"
+            tmp = ("y{} - {} >= y{} - {} + {} x{}{} + {} y{}{};"
                    .format(m, var.hard_modules[mod + 1][1], n, 2*H_max, H_max, 
                            m, n, H_max, m, n))
             # add constraint to output file
