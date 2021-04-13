@@ -75,29 +75,56 @@ def generate_lp():
         while n <= var.hard_num:
             # non-overlap constraint for all subsequent modules
             tmp = ("x{} + {} <= x{} + {}x{}{} + {}y{}{};"
-                   .format(m, var.hard_modules[mod][0], n, W_max, m, n, W_max, m, n))
+                   .format(m, var.hard_modules[mod][0], n, W_max, m, n, W_max, 
+                           m, n))
             # add constraint to output file
             output.write(tmp + "\n")
             tmp = ("x{} - {} >= x{} - {} + {}x{}{} - {}y{}{};"
-                   .format(m, var.hard_modules[mod + 1][0], n, W_max, W_max, m, n, W_max, m, n))
+                   .format(m, var.hard_modules[mod + 1][0], n, W_max, W_max, m, 
+                           n, W_max, m, n))
             # add constraint to output file
             output.write(tmp + "\n")
             tmp = ("y{} + {} <= y{} + {} + {}x{}{} - {}y{}{};"
-                   .format(m, var.hard_modules[mod][1], n, H_max, H_max, m, n, H_max, m, n))
+                   .format(m, var.hard_modules[mod][1], n, H_max, H_max, m, n, 
+                           H_max, m, n))
             # add constraint to output file
             output.write(tmp + "\n")
             tmp = ("y{} - {} >= y{} - {} + {}x{}{} + {}y{}{};"
-                   .format(m, var.hard_modules[mod + 1][1], n, 2*H_max, H_max, m, n, H_max, m, n))
+                   .format(m, var.hard_modules[mod + 1][1], n, 2*H_max, H_max, 
+                           m, n, H_max, m, n))
             # add constraint to output file
             output.write(tmp + "\n")
             output.write("\n") # add a new line for readability
             n = n + 1 # increment n to go to next module
         
-    #output.write("/* Variable type constraints */\n")
-    #output.write("int ")
-    #for mod in range(1, var.hard_num):
+    output.write("/* Variable type constraints */\n")
+    # continuous integer constraints
+    output.write("int ")
+    for mod in range(1, var.hard_num + 1):
         # for each hard module
-        
+        output.write("x{}, y{}, ".format(mod, mod))
+    output.write("y_star;\n") # area needs to be continuous integer
+    # binary constraints
+    output.write("bin ")
+    for mod in range(1, var.hard_num - 1):
+        # for each hard module except the last two
+        next_mod = mod + 1 # number of the next module
+        while next_mod <= var.hard_num:
+            # binary constraints for hard modules
+            output.write("x{}{}, y{}{}, ".format(mod, next_mod, mod, next_mod))
+            next_mod = next_mod + 1 # increment next module
+    output.write("x{}{}, y{}{};\n"
+                 .format(var.hard_num - 1, var.hard_num, var.hard_num - 1, 
+                         var.hard_num))
     
+    output.write("\n") # add a new line for readability
+    output.write("/* Chip width and height constraints */\n")
+    for mod in range(1, var.hard_num + 1):
+        # for each hard module
+        # chip width constraint
+        output.write("x{} + {} <= y_star;\n".format(mod, var.hard_modules[mod - 1][0]))
+        # chip height constraint
+        output.write("y{} + {} <= y_star;\n".format(mod, var.hard_modules[mod - 1][1]))
+        
     
     
