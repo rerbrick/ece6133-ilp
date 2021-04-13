@@ -67,31 +67,36 @@ def generate_lp():
     output.write("min: y_star;\n") # try to minimize chip area
     output.write("\n") # new line for readability
     
+    output.write("/* Non-overlap constraints */\n")
     for mod in range(var.hard_num):
         # for each hard module
         m = mod + 1 # number of starting module
         n = m + 1 # number of subsequent module
         while n <= var.hard_num:
             # non-overlap constraint for all subsequent modules
-            tmp = ("x{} + {} <= x{} + {}(x{}{} + y{}{});"
-                   .format(m, var.hard_modules[mod][0], n, W_max, m, n, m, n))
+            tmp = ("x{} + {} <= x{} + {}x{}{} + {}y{}{};"
+                   .format(m, var.hard_modules[mod][0], n, W_max, m, n, W_max, m, n))
             # add constraint to output file
             output.write(tmp + "\n")
-            tmp = ("x{} - {} >= x{} - {}(1 - x{}{} + y{}{});"
-                   .format(m, var.hard_modules[mod + 1][0], n, W_max, m, n, m, n))
+            tmp = ("x{} - {} >= x{} - {} + {}x{}{} - {}y{}{};"
+                   .format(m, var.hard_modules[mod + 1][0], n, W_max, W_max, m, n, W_max, m, n))
             # add constraint to output file
             output.write(tmp + "\n")
-            tmp = ("y{} + {} <= y{} + {}(1 + x{}{} - y{}{});"
-                   .format(m, var.hard_modules[mod][1], n, H_max, m, n, m, n))
+            tmp = ("y{} + {} <= y{} + {} + {}x{}{} - {}y{}{};"
+                   .format(m, var.hard_modules[mod][1], n, H_max, H_max, m, n, H_max, m, n))
             # add constraint to output file
             output.write(tmp + "\n")
-            tmp = ("y{} - {} >= y{} - {}(2 - x{}{} - y{}{});"
-                   .format(m, var.hard_modules[mod + 1][1], n, H_max, m, n, m, n))
+            tmp = ("y{} - {} >= y{} - {} + {}x{}{} + {}y{}{};"
+                   .format(m, var.hard_modules[mod + 1][1], n, 2*H_max, H_max, m, n, H_max, m, n))
             # add constraint to output file
             output.write(tmp + "\n")
             output.write("\n") # add a new line for readability
             n = n + 1 # increment n to go to next module
         
+    #output.write("/* Variable type constraints */\n")
+    #output.write("int ")
+    #for mod in range(1, var.hard_num):
+        # for each hard module
         
     
     
