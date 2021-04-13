@@ -97,6 +97,15 @@ def generate_lp():
             output.write("\n") # add a new line for readability
             n = n + 1 # increment n to go to next module
         
+    output.write("\n") # add a new line for readability
+    output.write("/* Chip width and height constraints */\n")
+    for mod in range(1, var.hard_num + 1):
+        # for each hard module
+        # chip width constraint
+        output.write("x{} + {} <= y_star;\n".format(mod, var.hard_modules[mod - 1][0]))
+        # chip height constraint
+        output.write("y{} + {} <= y_star;\n".format(mod, var.hard_modules[mod - 1][1]))
+    
     output.write("/* Variable type constraints */\n")
     # continuous integer constraints
     output.write("int ")
@@ -116,15 +125,3 @@ def generate_lp():
     output.write("x{}{}, y{}{};\n"
                  .format(var.hard_num - 1, var.hard_num, var.hard_num - 1, 
                          var.hard_num))
-    
-    output.write("\n") # add a new line for readability
-    output.write("/* Chip width and height constraints */\n")
-    for mod in range(1, var.hard_num + 1):
-        # for each hard module
-        # chip width constraint
-        output.write("x{} + {} <= y_star;\n".format(mod, var.hard_modules[mod - 1][0]))
-        # chip height constraint
-        output.write("y{} + {} <= y_star;\n".format(mod, var.hard_modules[mod - 1][1]))
-        
-    
-    
