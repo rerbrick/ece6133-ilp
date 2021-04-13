@@ -5,42 +5,38 @@
 # chip constraints, and closing the benchmark file
 ###
 
-import sys # for command line argument
 from file_generator import * # import all functions from soft_module.py
 
 ###
-# Gets the file name given by the user, adds the directory to the file path,
+# Uses the file name given by the user, adds the directory to the file path,
 # and tries to open the file. Alerts the user if the file does not exist.
 #
-# Expects user to enter only one valid file name.
+# Expects user to enter only one valid file name without the .ilp extension.
+#
+# @param    file_name: the name of the benchmark file provided by the user
 ###
-def open_file():
+def open_benchmark(file_name):
     global benchmark # global variable for reading the file
-    file_name = sys.argv[1] # get name of benchmark file
     # add benchmark directory to file path
-    file_path = "benchmarks/{}".format(file_name)
+    file_path = "benchmarks/{}.ilp".format(file_name)
     # try to open the file in read-only mode
     try:
         benchmark = open(file_path, "r")
     except IOError:
         # the file could not be found
-        print("Error: File does not appear to exist.")
         return False # file could not be opened
-    print("Benchmark file was opened.")
     return True # file was opened
 
 ###
 # Closes the benchmark file
 ###
-def close_file():
+def close_benchmark():
     global benchmark # add benchmark variable to function scope
     try:
         benchmark.close()
     except IOError:
         # there was an error while closing the file
-        print("Error: File could not be closed.")
         return False # file wasn't successfully closed
-    print("Benchmark file was closed.")
     return True # file was closed
     
 ###
@@ -49,7 +45,7 @@ def close_file():
 #
 # Expects files to be written as example in README in benchmarks directory
 ###
-def read_file():
+def read_benchmark():
     global benchmark # add benchmark variable to function scope
     global hard_modules # list for hard module width and height
     global soft_modules # list for soft module area and area ratio range
