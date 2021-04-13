@@ -75,29 +75,28 @@ def generate_lp():
         while n <= var.hard_num:
             # non-overlap constraint for all subsequent modules
             tmp = ("x{} + {} <= x{} + {} x{}{} + {} y{}{};"
-                   .format(m, var.hard_modules[mod][0], n, W_max, m, n, W_max, 
+                   .format(m, var.hard_modules[m - 1][0], n, W_max, m, n, W_max, 
                            m, n))
             # add constraint to output file
             output.write(tmp + "\n")
             tmp = ("x{} - {} >= x{} - {} + {} x{}{} - {} y{}{};"
-                   .format(m, var.hard_modules[mod + 1][0], n, W_max, W_max, m, 
+                   .format(m, var.hard_modules[n - 1][0], n, W_max, W_max, m, 
                            n, W_max, m, n))
             # add constraint to output file
             output.write(tmp + "\n")
             tmp = ("y{} + {} <= y{} + {} + {} x{}{} - {} y{}{};"
-                   .format(m, var.hard_modules[mod][1], n, H_max, H_max, m, n, 
+                   .format(m, var.hard_modules[m - 1][1], n, H_max, H_max, m, n, 
                            H_max, m, n))
             # add constraint to output file
             output.write(tmp + "\n")
             tmp = ("y{} - {} >= y{} - {} + {} x{}{} + {} y{}{};"
-                   .format(m, var.hard_modules[mod + 1][1], n, 2*H_max, H_max, 
+                   .format(m, var.hard_modules[n - 1][1], n, 2*H_max, H_max, 
                            m, n, H_max, m, n))
             # add constraint to output file
             output.write(tmp + "\n")
             output.write("\n") # add a new line for readability
             n = n + 1 # increment n to go to next module
         
-    output.write("\n") # add a new line for readability
     output.write("/* Chip width and height constraints */\n")
     for mod in range(1, var.hard_num + 1):
         # for each hard module
@@ -105,6 +104,7 @@ def generate_lp():
         output.write("x{} + {} <= y_star;\n".format(mod, var.hard_modules[mod - 1][0]))
         # chip height constraint
         output.write("y{} + {} <= y_star;\n".format(mod, var.hard_modules[mod - 1][1]))
+    output.write("\n") # add a new line for readability
     
     output.write("/* Variable type constraints */\n")
     # continuous integer constraints
