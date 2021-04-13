@@ -1,4 +1,5 @@
 import sys # for command line argument
+import var
 from file_parser import * # get all functions from file_parser.py
 from file_generator import * # get all functions from file_generator.py
 
@@ -6,8 +7,7 @@ from file_generator import * # get all functions from file_generator.py
 # Just a main function
 ###
 def main():
-    # global variables for lists of hard and soft modules
-    global hard_modules, soft_modules
+    var.init() # initialize global variables
  
     file_name = sys.argv[1] # get name of benchmark file
     

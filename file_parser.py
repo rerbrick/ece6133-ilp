@@ -5,7 +5,9 @@
 # chip constraints, and closing the benchmark file
 ###
 
-from file_generator import * # import all functions from soft_module.py
+import var # import global variables from settings.py
+
+global benchmark
 
 ###
 # Uses the file name given by the user, adds the directory to the file path,
@@ -16,7 +18,7 @@ from file_generator import * # import all functions from soft_module.py
 # @param    file_name: the name of the benchmark file provided by the user
 ###
 def open_benchmark(file_name):
-    global benchmark # global variable for reading the file
+    global benchmark # add benchmark file to function scope
     # add benchmark directory to file path
     file_path = "benchmarks/{}.ilp".format(file_name)
     # try to open the file in read-only mode
@@ -31,7 +33,7 @@ def open_benchmark(file_name):
 # Closes the benchmark file
 ###
 def close_benchmark():
-    global benchmark # add benchmark variable to function scope
+    global benchmark # add benchmark file to function scope
     try:
         benchmark.close()
     except IOError:
@@ -46,9 +48,7 @@ def close_benchmark():
 # Expects files to be written as example in README in benchmarks directory
 ###
 def read_benchmark():
-    global benchmark # add benchmark variable to function scope
-    global hard_modules # list for hard module width and height
-    global soft_modules # list for soft module area and area ratio range
+    global benchmark # add benchmark file to function scope
     while True: # iterate through the file
         line = benchmark.readline() # get one line of benchmark file
         if len(line) == 0:
@@ -58,22 +58,24 @@ def read_benchmark():
         module = line.strip().split(' - ')
         if module[0] == 'hard':
             # following values are hard modules
-            for num in range(int(module[1])):
+            var.hard_num = int(module[1]) # assign number of hard modules
+            for num in range(var.hard_num):
                 # read the number of hard modules
                 line = benchmark.readline()
                 values = line.strip().split(',') # remove commas
                 # convert string to integers and add to hard modules list
                 temp_list = [int(values[0]), int(values[1])]
-                hard_modules.append(temp_list)
+                var.hard_modules.append(temp_list)
         elif module[0] == 'soft':
             # following values are soft modules
-            for num in range(int(module[1])):
+            var.soft_num = int(module[1]) # assign number of soft modules
+            for num in range(var.soft_num):
                 # read the number of soft modules
                 line = benchmark.readline()
                 values = line.strip().split(',') # remove commas
                 # convert string to integers and add to soft modules list
                 temp_list = [int(values[0]), float(values[1]), float(values[2])]
-                soft_modules.append(temp_list)
+                var.soft_modules.append(temp_list)
         else:
             pass # go on to the next line
                 
