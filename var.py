@@ -8,8 +8,12 @@ def init():
     hard_num = 0 # initial number of hard modules is 0
     global soft_num # number of soft modules
     soft_num = 0 # initial number of soft modules is 0
+    global mod_num # total number of hard and soft modules
+    mod_num = 0
     
-    global hard_modules # hard_modules = [width, height]
-    hard_modules = []
-    global soft_modules # soft_modules = [area, aspect_ratio_min, aspect_ratio_max]
-    soft_modules = []
+    # hard modules = ["hard", width, height]
+    # soft_modules = ["soft", min_width, max_width
+    #                  slope, intercept,
+    #                  min_height, max_height]
+    global all_mod # list of all modules
+    all_mod = []
