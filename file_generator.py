@@ -81,12 +81,18 @@ def generate_lp():
             output.write("w{} = {};\n".format(mod, var.all_mod[mod - 1][1]))
             # given height of hard module
             output.write("h{} = {};\n".format(mod, var.all_mod[mod - 1][2]))
-            # chip width constraint
-            output.write("x{} + {} <= y_star;\n".format(mod, var.all_mod[mod - 1][1]))
-            # chip height constraint
-            output.write("y{} + {} <= y_star;\n".format(mod, var.all_mod[mod - 1][2]))
-            # module rotation constraints (allows ease of access for z variables)
+            # module rotation constraints
             output.write("z{} >= 0;\n".format(mod))
+            # chip width constraint
+            output.write("x{} + {} - {} z{} + {} z{} <= y_star;\n"
+                         .format(mod, var.all_mod[mod - 1][1],
+                                 var.all_mod[mod - 1][1], mod,
+                                 var.all_mod[mod - 1][2], mod))
+            # chip height constraint
+            output.write("y{} + {} - {} z{} + {} z{} <= y_star;\n"
+                         .format(mod, var.all_mod[mod - 1][2],
+                                 var.all_mod[mod - 1][2], mod,
+                                 var.all_mod[mod - 1][1], mod))
     output.write("\n") # add a new line for readability
     
     output.write("/* Non-overlap constraints */\n")
@@ -97,9 +103,9 @@ def generate_lp():
         while n <= var.hard_num:
             # non-overlap constraint for all subsequent modules
             # x_m + h_m * z_m + w_m(1 - z_m) <= x_n + W_max(x_mn + y_mn)
-            tmp = ("x{} + {} z{} + {} - {} z{} <= x{} + {} x{}_{} + {} y{}_{};"
+            tmp = ("x{} + h{} z{} + {} - {} z{} <= x{} + {} x{}_{} + {} y{}_{};"
                    .format(m,                        # x_m
-                           var.all_mod[m - 1][2], m, # h_m * z_m
+                           m, m,                     # h_m * z_m
                            var.all_mod[m - 1][1],    # w_m
                            var.all_mod[m - 1][1], m, # w_m * z_m
                            n,                        # x_n
