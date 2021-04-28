@@ -103,50 +103,50 @@ def generate_lp():
         while n <= var.hard_num:
             # non-overlap constraint for all subsequent modules
             # x_m + h_m * z_m + w_m(1 - z_m) <= x_n + W_max(x_mn + y_mn)
-            tmp = ("x{} + h{} z{} + {} - {} z{} <= x{} + {} x{}_{} + {} y{}_{};"
-                   .format(m,                        # x_m
-                           m, m,                     # h_m * z_m
-                           var.all_mod[m - 1][1],    # w_m
-                           var.all_mod[m - 1][1], m, # w_m * z_m
-                           n,                        # x_n
-                           bound, m, n,              # W_max * x_mn
-                           bound, m, n))             # W_max * y_mn
+            tmp = ("x{} + h{} z{} + w{} - w{} z{} <= x{} + {} x{}_{} + {} y{}_{};"
+                   .format(m,               # x_m
+                           m, m,            # h_m * z_m
+                           m,               # w_m
+                           m, m,            # w_m * z_m
+                           n,               # x_n
+                           bound, m, n,     # W_max * x_mn
+                           bound, m, n))    # W_max * y_mn
             # add constraint to output file
             output.write(tmp + "\n")
             # x_m - h_n * z_n - w_n(1 - z_n) >= x_n - W_max(1 - x_mn + y_mn)
-            tmp = ("x{} - {} z{} - {} + {} z{} >= x{} - {} + {} x{}_{} - {} y{}_{};"
-                   .format(m,                        # x_m
-                           var.all_mod[n - 1][2], n, # h_n * z_n
-                           var.all_mod[n - 1][1],    # w_n
-                           var.all_mod[n - 1][1], n, # w_n * z_n
-                           n,                        # x_n
-                           bound,                    # W_max
-                           bound, m, n,              # W_max * x_mn
-                           bound, m, n))             # W_max * y_mn
+            tmp = ("x{} - h{} z{} - w{} + w{} z{} >= x{} - {} + {} x{}_{} - {} y{}_{};"
+                   .format(m,               # x_m
+                           n, n,            # h_n * z_n
+                           n,               # w_n
+                           n, n,            # w_n * z_n
+                           n,               # x_n
+                           bound,           # W_max
+                           bound, m, n,     # W_max * x_mn
+                           bound, m, n))    # W_max * y_mn
             # add constraint to output file
             output.write(tmp + "\n")
             # y_m + h_m * z_m + h_m(1 - z_m) <= y_n + W_max(1 + x_mn - y_mn)
-            tmp = ("y{} + {} z{} + {} - {} z{} <= y{} + {} + {} x{}_{} - {} y{}_{};"
-                   .format(m,                        # y_m
-                           var.all_mod[m - 1][1], m, # w_m * z_m
-                           var.all_mod[m - 1][2],    # h_m
-                           var.all_mod[m - 1][2], m, # h_m * z_m
-                           n,                        # y_n
-                           bound,                    # W_max
-                           bound, m, n,              # W_max * x_mn
-                           bound, m, n))             # W_max * y_mn
+            tmp = ("y{} + w{} z{} + h{} - h{} z{} <= y{} + {} + {} x{}_{} - {} y{}_{};"
+                   .format(m,               # y_m
+                           m, m,            # w_m * z_m
+                           m,               # h_m
+                           m, m,            # h_m * z_m
+                           n,               # y_n
+                           bound,           # W_max
+                           bound, m, n,     # W_max * x_mn
+                           bound, m, n))    # W_max * y_mn
             # add constraint to output file
             output.write(tmp + "\n")
             # y_m - w_n * z_n - h_n(1 - z_n) <= y_n + W_max(2 - x_mn - y_mn)
-            tmp = ("y{} - {} z{} - {} + {} z{} >= y{} - {} + {} x{}_{} + {} y{}_{};"
-                   .format(m,                        # y_m
-                           var.all_mod[n - 1][1], n, # w_n * z_n
-                           var.all_mod[n - 1][2],    # h_n
-                           var.all_mod[n - 1][2], n, # h_n * z_n
-                           n,                        # y_n
-                           2 * bound,                # 2 * W_max
-                           bound, m, n,              # W_max * x_mn
-                           bound, m, n))             # W_max * y_mn
+            tmp = ("y{} - w{} z{} - h{} + h{} z{} >= y{} - {} + {} x{}_{} + {} y{}_{};"
+                   .format(m,               # y_m
+                           n, n,            # w_n * z_n
+                           n,               # h_n
+                           n, n,            # h_n * z_n
+                           n,               # y_n
+                           2 * bound,       # 2 * W_max
+                           bound, m, n,     # W_max * x_mn
+                           bound, m, n))    # W_max * y_mn
             # add constraint to output file
             output.write(tmp + "\n")
             output.write("\n") # add a new line for readability
