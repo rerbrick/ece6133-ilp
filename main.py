@@ -2,10 +2,13 @@ import sys # for command line argument
 import var
 from file_parser import * # get all functions from file_parser.py
 from file_generator import * # get all functions from file_generator.py
+from lpsolve55 import *
+from plotter import *
 
 ###
 # Just a main function
 ###
+
 def main():
     var.init() # initialize global variables
  
@@ -49,3 +52,13 @@ def main():
     
 if __name__ == "__main__":
     main()
+    mod1 = lpsolve("read_lp", "10_block.lp")
+    res1 = lpsolve('solve', mod1)
+    obj1 = lpsolve('get_objective', mod1)
+    vars1 = lpsolve('get_variables', mod1)[0]
+    names = lpsolve('get_origcol_name', mod1)
+    #print("obj1: ", obj1)
+    print("vars1: ", vars1)
+    print("names: ", names)
+    mylist=vars1[0:5*(var.hard_num+var.soft_num)+1]
+    plotthing(mylist)
