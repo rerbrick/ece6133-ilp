@@ -78,12 +78,13 @@ def read_benchmark():
                 values = line.strip().split(',') # remove commas
                 # convert string to integers and add to soft modules list
                 area = float(values[0]) # area of soft module
+                print(area)
                 w_min = sqrt(area * float(values[1])) # minimum width
                 w_max = sqrt(area * float(values[2])) # maximum width
                 slope = -(area/(w_max ** 2)) # slope for height equation
                 intercept = 2 * (area/w_max) # intercept for height equation
-                h_min = slope * w_min + intercept # minimum height
-                h_max = slope * w_max + intercept # maximum height
+                h_min = slope * w_max + intercept # minimum height
+                h_max = slope * w_min + intercept # maximum height
                 temp_list = ["soft", w_min, w_max, slope, intercept, h_min, h_max]
                 var.all_mod.append(temp_list)
         else:
