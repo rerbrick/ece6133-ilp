@@ -51,8 +51,11 @@ def upper_bound():
     for module in var.all_mod:
         if (module[0] == "hard"):
             # hard module
-            W_max = W_max + module[1]
-            H_max = H_max + module[2]
+            W_max += max(module[1], module[2]) # max of height and width
+            H_max += max(module[1], module[2]) # max of height and width
+        elif (module[0] == "soft"):
+            W_max += module[2] # maximum width
+            H_max += module[6] # maximum height
     # return the maximum value between the width and height
     return max(W_max, H_max)
 
@@ -93,14 +96,31 @@ def generate_lp():
                          .format(mod, var.all_mod[mod - 1][2],
                                  var.all_mod[mod - 1][2], mod,
                                  var.all_mod[mod - 1][1], mod))
+        elif (var.all_mod[mod - 1][0] == "soft"):
+            # module is a soft module
+            # min and max width of soft module
+            output.write("{} <= w{} <= {};\n".format(var.all_mod[mod - 1][1],
+                         mod, var.all_mod[mod - 1][2]))
+            # min and max height of soft module
+            output.write("{} <= h{} <= {};\n".format(var.all_mod[mod - 1][5],
+                         mod, var.all_mod[mod - 1][6]))
+            # relationship between width and height
+            output.write("h{} = {} w{} + {};\n".format(mod, var.all_mod[mod - 1][3],
+                         mod, var.all_mod[mod - 1][4]))
+            # module rotation constraints
+            output.write("z{} = 0;\n".format(mod))
+            # chip width constraint
+            output.write("x{} + w{} <= y_star;\n".format(mod, mod))
+            # chip height constraint
+            output.write("y{} + h{} <= y_star;\n".format(mod, mod))
     output.write("\n") # add a new line for readability
     
     output.write("/* Non-overlap constraints */\n")
-    for mod in range(var.hard_num):
-        # for each hard module
+    for mod in range(var.mod_num):
+        # for all modules
         m = mod + 1 # number of starting module
         n = m + 1 # number of subsequent module
-        while n <= var.hard_num:
+        while n <= var.mod_num:
             # non-overlap constraint for all subsequent modules
             # x_m + h_m * z_m + w_m(1 - z_m) <= x_n + W_max(x_mn + y_mn)
             tmp = ("x{} + h{} z{} + w{} - w{} z{} <= x{} + {} x{}_{} + {} y{}_{};"
@@ -154,25 +174,28 @@ def generate_lp():
     
     output.write("/* Variable type constraints */\n")
     # continuous integer constraints
-    output.write("int ")
-    for mod in range(1, var.hard_num + 1):
+    output.write("sec ")
+    for mod in range(1, var.mod_num + 1):
         # for each hard module
-        output.write("x{}, y{}, ".format(mod, mod))
+        if (var.all_mod[mod - 1][0] == "hard"):
+            output.write("x{}, y{}, ".format(mod, mod))
+        elif (var.all_mod[mod - 1][0] == "soft"):
+            output.write("x{}, y{}, w{}, h{}, ".format(mod, mod, mod, mod))
     output.write("y_star;\n") # area needs to be continuous integer
     # binary constraints
     output.write("bin ") # rotation constraints
-    for mod in range(1, var.hard_num):
+    for mod in range(1, var.mod_num):
         # for each hard module except the last one
         output.write("z{}, ".format(mod))
-    output.write("z{}; \n".format(var.hard_num))
+    output.write("z{}; \n".format(var.mod_num))
     output.write("bin ") # relative position constraints
-    for mod in range(1, var.hard_num - 1):
+    for mod in range(1, var.mod_num - 1):
         # for each hard module except the last two
         next_mod = mod + 1 # number of the next module
-        while next_mod <= var.hard_num:
+        while next_mod <= var.mod_num:
             # binary constraints for hard modules
             output.write("x{}_{}, y{}_{}, ".format(mod, next_mod, mod, next_mod))
             next_mod = next_mod + 1 # increment next module
     output.write("x{}_{}, y{}_{};\n"
-                 .format(var.hard_num - 1, var.hard_num, var.hard_num - 1, 
-                         var.hard_num))
+                 .format(var.mod_num - 1, var.mod_num, var.mod_num - 1, 
+                         var.mod_num))
