@@ -174,23 +174,13 @@ def generate_lp():
     
     output.write("/* Variable type constraints */\n")
     # continuous integer constraints
-    output.write("sec ")
     for mod in range(1, var.mod_num + 1):
-        # for each hard module
+        next_mod = mod + 1 # number of the next module
         if (var.all_mod[mod - 1][0] == "hard"):
-            output.write("x{}, y{}, ".format(mod, mod))
-        elif (var.all_mod[mod - 1][0] == "soft"):
-            output.write("x{}, y{}, w{}, h{}, ".format(mod, mod, mod, mod))
-    output.write("y_star;\n") # area needs to be continuous integer
-    # binary constraints
-    output.write("bin ") # rotation constraints
-    for mod in range(1, var.mod_num):
-        # for each hard module except the last one
-        output.write("z{}, ".format(mod))
-    output.write("z{}; \n".format(var.mod_num))
+            output.write("bin z{};\n".format(mod))
     output.write("bin ") # relative position constraints
     for mod in range(1, var.mod_num - 1):
-        # for each hard module except the last two
+        # for each module except the last two
         next_mod = mod + 1 # number of the next module
         while next_mod <= var.mod_num:
             # binary constraints for hard modules
