@@ -85,7 +85,7 @@ def read_benchmark():
                 intercept = 2 * (area/w_max) # intercept for height equation
                 h_min = slope * w_max + intercept # minimum height
                 h_max = slope * w_min + intercept # maximum height
-                temp_list = ["soft", w_min, w_max, slope, intercept, h_min, h_max]
+                temp_list = ["soft", w_min, w_max, slope, intercept, h_min, h_max,area]
                 var.all_mod.append(temp_list)
         else:
             pass # go on to the next line            
