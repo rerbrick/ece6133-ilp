@@ -52,7 +52,9 @@ def main():
     
     # solve the lp file
     output_file = "{}.lp".format(file_name)
+
     mod1 = lpsolve("read_lp", output_file)
+    lpsolve("set_timeout",mod1,120)
     res1 = lpsolve('solve', mod1)
     obj1 = lpsolve('get_objective', mod1)
     vars1 = lpsolve('get_variables', mod1)[0]
