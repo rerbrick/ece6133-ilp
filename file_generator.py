@@ -77,7 +77,6 @@ def generate_lp():
     
     output.write("/* Chip width and height constraints */\n")
     for mod in range(1, var.mod_num + 1):
-        print(var.all_mod[mod - 1][0])
         if (var.all_mod[mod - 1][0] == "hard"):
             # module is a hard module
             # given width of hard module
@@ -121,24 +120,47 @@ def generate_lp():
         m = mod + 1 # number of starting module
         n = m + 1 # number of subsequent module
         while n <= var.mod_num:
+            # variable assignments for hard and soft modules
+            # module m
+            if (var.all_mod[m - 1][0] == "hard"):
+                width_m = var.all_mod[m - 1][1]
+                width_z_m = ("{} z{}".format(var.all_mod[m - 1][1], m))
+                height_m = var.all_mod[m - 1][2]
+                height_z_m = ("{} z{}".format(var.all_mod[m - 1][2], m))
+            elif (var.all_mod[m - 1][0] == "soft"):
+                width_m = ("w{}".format(m))
+                width_z_m = 0
+                height_m = ("h{}".format(m))
+                height_z_m = 0
+            # module n
+            if (var.all_mod[n - 1][0] == "hard"):
+                width_n = var.all_mod[n - 1][1]
+                width_z_n = ("{} z{}".format(var.all_mod[n - 1][1], n))
+                height_n = var.all_mod[n - 1][2]
+                height_z_n = ("{} z{}".format(var.all_mod[n - 1][2], n))
+            elif (var.all_mod[n - 1][0] == "soft"):
+                width_n = ("w{}".format(n))
+                width_z_n = 0
+                height_n = ("h{}".format(n))
+                height_z_n = 0
             # non-overlap constraint for all subsequent modules
             # x_m + h_m * z_m + w_m(1 - z_m) <= x_n + W_max(x_mn + y_mn)
-            tmp = ("x{} + h{} z{} + w{} - w{} z{} <= x{} + {} x{}_{} + {} y{}_{};"
+            tmp = ("x{} + {} + {} - {} <= x{} + {} x{}_{} + {} y{}_{};"
                    .format(m,               # x_m
-                           m, m,            # h_m * z_m
-                           m,               # w_m
-                           m, m,            # w_m * z_m
+                           height_z_m,      # h_m * z_m
+                           width_m,         # w_m
+                           width_z_m,       # w_m * z_m
                            n,               # x_n
                            bound, m, n,     # W_max * x_mn
                            bound, m, n))    # W_max * y_mn
             # add constraint to output file
             output.write(tmp + "\n")
             # x_m - h_n * z_n - w_n(1 - z_n) >= x_n - W_max(1 - x_mn + y_mn)
-            tmp = ("x{} - h{} z{} - w{} + w{} z{} >= x{} - {} + {} x{}_{} - {} y{}_{};"
+            tmp = ("x{} - {} - {} + {} >= x{} - {} + {} x{}_{} - {} y{}_{};"
                    .format(m,               # x_m
-                           n, n,            # h_n * z_n
-                           n,               # w_n
-                           n, n,            # w_n * z_n
+                           height_z_n,      # h_n * z_n
+                           width_n,         # w_n
+                           width_z_n,       # w_n * z_n
                            n,               # x_n
                            bound,           # W_max
                            bound, m, n,     # W_max * x_mn
@@ -146,11 +168,11 @@ def generate_lp():
             # add constraint to output file
             output.write(tmp + "\n")
             # y_m + h_m * z_m + h_m(1 - z_m) <= y_n + W_max(1 + x_mn - y_mn)
-            tmp = ("y{} + w{} z{} + h{} - h{} z{} <= y{} + {} + {} x{}_{} - {} y{}_{};"
+            tmp = ("y{} + {} + {} - {} <= y{} + {} + {} x{}_{} - {} y{}_{};"
                    .format(m,               # y_m
-                           m, m,            # w_m * z_m
-                           m,               # h_m
-                           m, m,            # h_m * z_m
+                           width_z_m,       # w_m * z_m
+                           height_m,        # h_m
+                           height_z_m,      # h_m * z_m
                            n,               # y_n
                            bound,           # W_max
                            bound, m, n,     # W_max * x_mn
@@ -158,11 +180,11 @@ def generate_lp():
             # add constraint to output file
             output.write(tmp + "\n")
             # y_m - w_n * z_n - h_n(1 - z_n) <= y_n + W_max(2 - x_mn - y_mn)
-            tmp = ("y{} - w{} z{} - h{} + h{} z{} >= y{} - {} + {} x{}_{} + {} y{}_{};"
+            tmp = ("y{} - {} - {} + {} >= y{} - {} + {} x{}_{} + {} y{}_{};"
                    .format(m,               # y_m
-                           n, n,            # w_n * z_n
-                           n,               # h_n
-                           n, n,            # h_n * z_n
+                           width_z_n,       # w_n * z_n
+                           height_n,        # h_n
+                           height_z_n,      # h_n * z_n
                            n,               # y_n
                            2 * bound,       # 2 * W_max
                            bound, m, n,     # W_max * x_mn

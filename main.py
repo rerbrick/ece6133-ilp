@@ -50,15 +50,18 @@ def main():
     # output file was closed if code gets here
     print("Output file was closed.")
     
-if __name__ == "__main__":
-    main()
-    mod1 = lpsolve("read_lp", "10_block.lp")
+    # solve the lp file
+    output_file = "{}.lp".format(file_name)
+    mod1 = lpsolve("read_lp", output_file)
     res1 = lpsolve('solve', mod1)
     obj1 = lpsolve('get_objective', mod1)
     vars1 = lpsolve('get_variables', mod1)[0]
     names = lpsolve('get_origcol_name', mod1)
-    #print("obj1: ", obj1)
     print("vars1: ", vars1)
     print("names: ", names)
-    mylist=vars1[0:5*(var.hard_num+var.soft_num)+1]
+    mylist=vars1[0:5*(var.mod_num)+1]
+    print(mylist)
     plotthing(mylist)
+    
+if __name__ == "__main__":
+    main()

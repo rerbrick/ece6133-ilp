@@ -14,7 +14,7 @@ def plotthing(mylist):
     counter=0
     #print(var.hard_modules)
     
-    for n in range(var.hard_num):
+    for n in range(var.mod_num):
         if mylist[3+(5*counter)] == 0:
             rect1=patches.Rectangle((mylist[4+(5*counter)], mylist[5+(5*counter)]), mylist[1+(5*counter)], mylist[2+(5*counter)],facecolor='red',edgecolor='black')
             #print((mylist[4+(5*counter)], mylist[5+(5*counter)],mylist[1+(5*counter)], mylist[2+(5*counter)])," no rotate")
@@ -27,5 +27,5 @@ def plotthing(mylist):
     #for n in var.soft_modules:
     plt.xlim(0,mylist[0])
     plt.ylim(0,mylist[0])
-    #plt.show()
+    plt.show()
 
