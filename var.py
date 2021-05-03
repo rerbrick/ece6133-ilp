@@ -14,6 +14,12 @@ def init():
     # hard modules = ["hard", width, height]
     # soft_modules = ["soft", min_width, max_width
     #                  slope, intercept,
-    #                  min_height, max_height]
+    #                  min_height, max_height, area]
     global all_mod # list of all modules
     all_mod = []
+    global all_mod_scaled # list of scaled modules
+    all_mod_scaled = []
+    
+    # overestimation or underestimation
+    global overestimate
+    overestimate = False

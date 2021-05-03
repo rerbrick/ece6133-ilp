@@ -14,6 +14,15 @@ def main():
  
     file_name = sys.argv[1] # get name of benchmark file
     
+    # get over or under estimation from the user
+    print("Enter 'o' for overestimation of 'u' for underestimation: ")
+    answer = input()
+    if (answer == 'o'):
+        var.overestimate = True
+    elif (answer == 'u'):
+        var.overestimate = False
+    print("\n{}".format(var.overestimate))
+    
     # try to open the benchmark file
     if not open_benchmark(file_name):
         # file could not be opened
