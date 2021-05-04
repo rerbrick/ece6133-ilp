@@ -27,10 +27,6 @@ def plotthing(mylist, all_mods, final_list):
                             mylist[list_index][1+(5*index)], 
                             mylist[list_index][2+(5*index)],
                             facecolor='red',edgecolor='black')
-                    print((mylist[list_index][4+(5*index)] + x_scale, 
-                           mylist[list_index][5+(5*index)] + y_scale,
-                           mylist[list_index][1+(5*index)], 
-                           mylist[list_index][2+(5*index)])," no rotate")
                 else:
                     rect1 = patches.Rectangle(
                             (mylist[list_index][4+(5*index)] + x_scale, 
@@ -38,10 +34,6 @@ def plotthing(mylist, all_mods, final_list):
                             mylist[list_index][2+(5*index)], 
                             mylist[list_index][1+(5*index)],
                             facecolor='yellow',edgecolor='black')
-                    print((mylist[list_index][4+(5*index)] + x_scale, 
-                           mylist[list_index][5+(5*index)] + y_scale,
-                           mylist[list_index][2+(5*index)], 
-                           mylist[list_index][1+(5*index)])," rotate")
                 ax1.add_patch(rect1)
             
             elif mod[0] == "soft":
@@ -51,13 +43,7 @@ def plotthing(mylist, all_mods, final_list):
                         mylist[list_index][1+(5*index)], 
                         chunk[index][7]/mylist[list_index][1+(5*index)],
                         facecolor='orange',edgecolor='black')
-                print((mylist[list_index][4+(5*index)] + x_scale, 
-                       mylist[list_index][5+(5*index)] + y_scale,
-                       mylist[list_index][1+(5*index)], 
-                       mylist[list_index][2+(5*index)])," soft module")
                 ax1.add_patch(rect1)
-                #if(chunk[index][7]/mylist[index][1+(5*index)] > ymax):
-                #    ymax=chunk[index][7]/mylist[index][1+(5*index)]+mylist[index][5+(5*index)]
                     
             index += 1
         list_index += 1

@@ -22,18 +22,6 @@ def create_lp(file_name):
         return False # file could not be opened or created
     return True # file was opened
 
-def create_ilp(file_name):
-    global output # add output file to scope
-    # add .lp extension to file name
-    file_ext = "{}_new.ilp".format(file_name)
-    # create a new output file or overwirte existing file
-    try:
-        output = open(file_ext, "w")
-    except IOError:
-        # the file could not be found
-        return False # file could not be opened or created
-    return True # file was opened
-
 ###
 # Closes the .lp output file
 ###

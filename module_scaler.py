@@ -25,9 +25,11 @@ def resize(mylist, chunk):
     if(ymax>mylist[0]):
         # if ymax is greater than the y value of the floorplan
         temp_list = ["hard", float(mylist[0]), float(ymax)]
+        print("Block Area: {}".format(mylist[0] * ymax))
         var.mod_chunks.append(temp_list)
     else:
         # ymax is not greater than the y value of the floorplan
         temp_list = ["hard", float(mylist[0]), float(mylist[0])]
+        print("Block Area: {}".format(mylist[0] ** 2))
         var.mod_chunks.append(temp_list)
 
