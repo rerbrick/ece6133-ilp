@@ -18,6 +18,14 @@ def init():
     global all_mod # list of all modules
     all_mod = []
     
+    # hard modules = ["hard", width, height]
+    global mod_chunks # list of chunks of modules
+    mod_chunks = []
+    
     # overestimation or underestimation
     global overestimate
     overestimate = False
+    
+    # list of all modules in all chunks
+    global big_list
+    big_list = []

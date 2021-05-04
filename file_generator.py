@@ -22,6 +22,18 @@ def create_lp(file_name):
         return False # file could not be opened or created
     return True # file was opened
 
+def create_ilp(file_name):
+    global output # add output file to scope
+    # add .lp extension to file name
+    file_ext = "{}_new.ilp".format(file_name)
+    # create a new output file or overwirte existing file
+    try:
+        output = open(file_ext, "w")
+    except IOError:
+        # the file could not be found
+        return False # file could not be opened or created
+    return True # file was opened
+
 ###
 # Closes the .lp output file
 ###
@@ -39,9 +51,9 @@ def close_lp():
 # each model. Assigns the sum of the widths to W_max and the sum of the heights
 # to H_max. Returns the maximum of the two values
 #
-# @return   the largest of the maximum height and maximum width
+# @param    chunk: a chunk of modules at most 10 modules large
 #
-# NOTE: Only considers hard modules for now.
+# @return   the largest of the maximum height and maximum width
 ###
 def upper_bound(chunk):
     # sum the widths and the heights of the modules
@@ -64,9 +76,10 @@ def upper_bound(chunk):
 # constraints, variable type constraints, chip width constraints, and chip
 # height constraints.
 #
-# NOTE: Only considers rotatable hard modules.
+# @param    chunk: a chunk of modules at most 10 modules large
+# @param    final_lp: True if chunk contains height and width of floorplans 
 ###
-def generate_lp(chunk):
+def generate_lp(chunk, final_lp):
     global output # add output file to function scope
     
     bound = upper_bound(chunk) # get maximum bound between the height and width
@@ -75,7 +88,7 @@ def generate_lp(chunk):
     output.write("\n") # new line for readability
     
     output.write("/* Chip width and height constraints */\n")
-    num = 0
+    num = 1
     for mod in chunk:
         if (mod[0] == "hard"):
             # module is a hard module
@@ -120,11 +133,16 @@ def generate_lp(chunk):
     for index in range(len(chunk)):
         # for all modules
         m = index + 1 # number of starting module
-        n = index + 1 # number of subsequent module
+        n = m + 1 # number of subsequent module
         while n <= len(chunk):
             # variable assignments for hard and soft modules
             # module m
-            if (chunk[m - 1][0] == "hard"):
+            if (chunk[m - 1][0] == "hard") and (final_lp == True):
+                width_m = chunk[m - 1][1]
+                width_z_m = 0
+                height_m = chunk[m - 1][2]
+                height_z_m = 0
+            elif (chunk[m - 1][0] == "hard"):
                 width_m = chunk[m - 1][1]
                 width_z_m = ("{} z{}".format(chunk[m - 1][1], m))
                 height_m = chunk[m - 1][2]
@@ -135,7 +153,12 @@ def generate_lp(chunk):
                 height_m = ("h{}".format(m))
                 height_z_m = 0
             # module n
-            if (chunk[n - 1][0] == "hard"):
+            if (chunk[n - 1][0] == "hard") and (final_lp == True):
+                width_n = chunk[n - 1][1]
+                width_z_n = 0
+                height_n = chunk[n - 1][2]
+                height_z_n = 0
+            elif (chunk[n - 1][0] == "hard"):
                 width_n = chunk[n - 1][1]
                 width_z_n = ("{} z{}".format(chunk[n - 1][1], n))
                 height_n = chunk[n - 1][2]

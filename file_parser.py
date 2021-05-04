@@ -59,8 +59,9 @@ def read_benchmark():
             var.mod_num = var.hard_num + var.soft_num
             if (len(temp_chunk) > 0):
                 # there are still modules left to add
-                var.all_mod.append(temp_chunk)
+                var.all_mod.append(temp_chunk.copy())
                 temp_chunk.clear()
+            print(var.all_mod)
             return # exit function
         # split line into module type and number of modules
         module = line.strip().split(' - ')
@@ -74,10 +75,10 @@ def read_benchmark():
                 # convert string to integers and add to hard modules list
                 temp_list = ["hard", int(values[0]), int(values[1])]
                 temp_chunk.append(temp_list)
-            if (len(temp_chunk) >= 10):
-                # has created list of 10 modules
-                var.all_mod.append(temp_chunk)
-                temp_chunk.clear() # clear all_mod list
+                if (len(temp_chunk) >= 10):
+                    # has created list of 10 modules
+                    var.all_mod.append(temp_chunk.copy())
+                    temp_chunk.clear() # clear all_mod list
         elif module[0] == 'soft':
             # following values are soft modules
             var.soft_num = int(module[1]) # assign number of soft modules
@@ -106,7 +107,7 @@ def read_benchmark():
                 temp_chunk.append(temp_list)
                 if (len(temp_chunk) >= 10):
                     # has created list of 10 modules
-                    var.all_mod.append(temp_chunk)
+                    var.all_mod.append(temp_chunk.copy())
                     temp_chunk.clear() # clear all_mod list
         else:
             pass # go on to the next line
