@@ -21,7 +21,6 @@ def main():
         var.overestimate = True
     elif (answer == 'u'):
         var.overestimate = False
-    print("\n{}".format(var.overestimate))
     
     # try to open the benchmark file
     if not open_benchmark(file_name):
@@ -41,36 +40,43 @@ def main():
     # benchmark file was closed if code gets here
     print("Benchmark file was closed.")
     
-    # try to create the output .lp file
-    if not create_lp(file_name):
-        # file could not be created or rewritten
-        print("Error: File could not be created.")
-        return -1 # return error code
-    # output file was created if code gets here
-    print("Output file was opened.")
+    file_num = 1
+    chunk_index = 0
+    for chunk in var.all_mod:
+        # for each chunk of modules
+        tmp_file_name = file_name + str(file_num)
+        # try to create the output .lp file
+        if not create_lp(tmp_file_name):
+            # file could not be created or rewritten
+            print("Error: File could not be created.")
+            return -1 # return error code
+        # output file was created if code gets here
+        print("Output file {} was opened.".format(file_num))
     
-    generate_lp()  # generate the lp file
+        generate_lp(chunk)  # generate the lp file
     
-    # try to close the output .lp file
-    if not close_lp():
-        # output file could not be closed
-        print("Error: File could not be closed.")
-        return -1 # return error code
-    # output file was closed if code gets here
-    print("Output file was closed.")
-    
-    # solve the lp file
-    output_file = "{}.lp".format(file_name)
-    mod1 = lpsolve("read_lp", output_file)
-    res1 = lpsolve('solve', mod1)
-    obj1 = lpsolve('get_objective', mod1)
-    vars1 = lpsolve('get_variables', mod1)[0]
-    names = lpsolve('get_origcol_name', mod1)
-    print("vars1: ", vars1)
-    print("names: ", names)
-    mylist=vars1[0:5*(var.mod_num)+1]
-    print(mylist)
-    plotthing(mylist)
+        # try to close the output .lp file
+        if not close_lp():
+            # output file could not be closed
+            print("Error: File could not be closed.")
+            return -1 # return error code
+        # output file was closed if code gets here
+        print("Output file {} was closed.".format(file_num))
+        
+        # solve the lp file
+        output_file = "{}.lp".format(temp_file_name)
+        mod1 = lpsolve("read_lp", output_file)
+        res1 = lpsolve('solve', mod1)
+        obj1 = lpsolve('get_objective', mod1)
+        vars1 = lpsolve('get_variables', mod1)[0]
+        names = lpsolve('get_origcol_name', mod1)
+        print("vars1: ", vars1)
+        print("names: ", names)
+        mylist=vars1[0:5*(var.mod_num)+1]
+        print(mylist)
+        plotthing(mylist, chunk)
+        
+        file_num += 1
     
 if __name__ == "__main__":
     main()

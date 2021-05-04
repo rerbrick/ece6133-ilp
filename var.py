@@ -17,8 +17,6 @@ def init():
     #                  min_height, max_height, area]
     global all_mod # list of all modules
     all_mod = []
-    global all_mod_scaled # list of scaled modules
-    all_mod_scaled = []
     
     # overestimation or underestimation
     global overestimate

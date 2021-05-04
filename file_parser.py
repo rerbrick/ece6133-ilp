@@ -50,12 +50,17 @@ def close_benchmark():
 ###
 def read_benchmark():
     global benchmark # add benchmark file to function scope
+    temp_chunk = [] # empty array for chunk of mods
     while True: # iterate through the file
         line = benchmark.readline() # get one line of benchmark file
         if len(line) == 0:
             # line does not have any characters
             # get total number of modules
             var.mod_num = var.hard_num + var.soft_num
+            if (len(temp_chunk) > 0):
+                # there are still modules left to add
+                var.all_mod.append(temp_chunk)
+                temp_chunk.clear()
             return # exit function
         # split line into module type and number of modules
         module = line.strip().split(' - ')
@@ -68,7 +73,11 @@ def read_benchmark():
                 values = line.strip().split(',') # remove commas
                 # convert string to integers and add to hard modules list
                 temp_list = ["hard", int(values[0]), int(values[1])]
-                var.all_mod.append(temp_list)
+                temp_chunk.append(temp_list)
+            if (len(temp_chunk) >= 10):
+                # has created list of 10 modules
+                var.all_mod.append(temp_chunk)
+                temp_chunk.clear() # clear all_mod list
         elif module[0] == 'soft':
             # following values are soft modules
             var.soft_num = int(module[1]) # assign number of soft modules
@@ -94,6 +103,10 @@ def read_benchmark():
                     h_max = slope * w_min + intercept # maximum height
                 temp_list = ["soft", w_min, w_max, slope, intercept, h_min, 
                              h_max, area]
-                var.all_mod.append(temp_list)
+                temp_chunk.append(temp_list)
+                if (len(temp_chunk) >= 10):
+                    # has created list of 10 modules
+                    var.all_mod.append(temp_chunk)
+                    temp_chunk.clear() # clear all_mod list
         else:
-            pass # go on to the next line            
+            pass # go on to the next line
