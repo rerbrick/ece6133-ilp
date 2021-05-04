@@ -1,3 +1,4 @@
+#Plot function that plots the modules
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import var
@@ -5,7 +6,7 @@ import random
 
 
 def plotthing(mylist, all_mods, final_list):
- 
+    #See all the returned values from the lpsolve
     print(mylist,"plotslist")
     
     fig = plt.figure()
@@ -21,6 +22,7 @@ def plotthing(mylist, all_mods, final_list):
         for mod in chunk:
             if mod[0] == "hard":
                 if mylist[list_index][3+(5*index)] == 0:
+                    #non-rotated hard module
                     rect1 = patches.Rectangle(
                             (mylist[list_index][4+(5*index)] + x_scale,
                             mylist[list_index][5+(5*index)] + y_scale), 
@@ -28,6 +30,7 @@ def plotthing(mylist, all_mods, final_list):
                             mylist[list_index][2+(5*index)],
                             facecolor='red',edgecolor='black')
                 else:
+                    #rotated hard module swaps the height and width
                     rect1 = patches.Rectangle(
                             (mylist[list_index][4+(5*index)] + x_scale, 
                             mylist[list_index][5+(5*index)] + y_scale),
@@ -36,11 +39,13 @@ def plotthing(mylist, all_mods, final_list):
                             facecolor='yellow',edgecolor='black')
                 ax1.add_patch(rect1)
             
+            #create the rectangles for the soft module 
             elif mod[0] == "soft":
                 rect1 = patches.Rectangle(
                         (mylist[list_index][4+(5*index)] + x_scale, 
                         mylist[list_index][5+(5*index)] + y_scale), 
                         mylist[list_index][1+(5*index)], 
+                        #area divided by width to get height for soft module
                         chunk[index][7]/mylist[list_index][1+(5*index)],
                         facecolor='orange',edgecolor='black')
                 ax1.add_patch(rect1)
@@ -48,6 +53,7 @@ def plotthing(mylist, all_mods, final_list):
             index += 1
         list_index += 1
 
+    #create the limits of the plot
     plt.ylim(0, final_list[0])
     plt.xlim(0, final_list[0])
 
