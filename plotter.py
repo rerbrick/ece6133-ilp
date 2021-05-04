@@ -50,5 +50,4 @@ def plotthing(mylist, all_mods, final_list):
 
     plt.ylim(0, final_list[0])
     plt.xlim(0, final_list[0])
-    plt.show()
 
