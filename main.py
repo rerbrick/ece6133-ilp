@@ -4,6 +4,8 @@ from file_parser import * # get all functions from file_parser.py
 from file_generator import * # get all functions from file_generator.py
 from lpsolve55 import *
 from plotter import *
+import timeit
+
 
 ###
 # Just a main function
@@ -75,4 +77,7 @@ def main():
     plotthing(mylist)
     
 if __name__ == "__main__":
+    start = timeit.default_timer()
     main()
+    stop = timeit.default_timer()
+    print('Time: ', stop - start)  
