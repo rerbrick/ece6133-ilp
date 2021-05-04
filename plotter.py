@@ -7,7 +7,7 @@ import random
 
 def plotthing(mylist, all_mods, final_list):
     #See all the returned values from the lpsolve
-    print(mylist,"plotslist")
+    #print(mylist,"plotslist")
     
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
@@ -56,4 +56,4 @@ def plotthing(mylist, all_mods, final_list):
     #create the limits of the plot
     plt.ylim(0, final_list[0])
     plt.xlim(0, final_list[0])
-
+    #plt.show()

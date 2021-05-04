@@ -13,6 +13,7 @@ import timeit
 ###
 
 def main():
+    start = timeit.default_timer()
     var.init() # initialize global variables
  
     file_name = sys.argv[1] # get name of benchmark file
@@ -117,6 +118,8 @@ def main():
     final_list=vars1[0:5*(len(var.mod_chunks))+1]
     
     # plot all the modules
+    stop = timeit.default_timer()
+    print('Time: ', stop - start)  
     plotthing(var.big_list, var.all_mod, final_list)
     # print final width, height, and area to console
     print("Chip Width: {}".format(final_list[0]))
@@ -125,7 +128,4 @@ def main():
     
     
 if __name__ == "__main__":
-    start = timeit.default_timer()
     main()
-    stop = timeit.default_timer()
-    print('Time: ', stop - start)  
