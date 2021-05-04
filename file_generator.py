@@ -39,16 +39,15 @@ def close_lp():
 # each model. Assigns the sum of the widths to W_max and the sum of the heights
 # to H_max. Returns the maximum of the two values
 #
-# @return   the largest of the maximum height and maximum width
+# @param    chunk: a chunk of modules at most 10 modules large
 #
-# NOTE: Only considers hard modules for now.
+# @return   the largest of the maximum height and maximum width
 ###
-def upper_bound():
-    # @TODO: add soft module functionality
+def upper_bound(chunk):
     # sum the widths and the heights of the modules
     W_max = 0 # initialize W_max before using it
     H_max = 0 # initialize H_max before using it
-    for module in var.all_mod:
+    for module in chunk:
         if (module[0] == "hard"):
             # hard module
             W_max += max(module[1], module[2]) # max of height and width
@@ -65,80 +64,94 @@ def upper_bound():
 # constraints, variable type constraints, chip width constraints, and chip
 # height constraints.
 #
-# NOTE: Only considers rotatable hard modules.
+# @param    chunk: a chunk of modules at most 10 modules large
+# @param    final_lp: True if chunk contains height and width of floorplans 
 ###
-def generate_lp():
+def generate_lp(chunk, final_lp):
     global output # add output file to function scope
     
-    bound = upper_bound() # get maximum bound between the height and width
+    bound = upper_bound(chunk) # get maximum bound between the height and width
     
     output.write("min: y_star;\n") # try to minimize chip area
     output.write("\n") # new line for readability
     
     output.write("/* Chip width and height constraints */\n")
-    for mod in range(1, var.mod_num + 1):
-        if (var.all_mod[mod - 1][0] == "hard"):
+    num = 1
+    for mod in chunk:
+        if (mod[0] == "hard"):
             # module is a hard module
             # given width of hard module
-            output.write("w{} = {};\n".format(mod, var.all_mod[mod - 1][1]))
+            output.write("w{} = {};\n".format(num, mod[1]))
             # given height of hard module
-            output.write("h{} = {};\n".format(mod, var.all_mod[mod - 1][2]))
+            output.write("h{} = {};\n".format(num, mod[2]))
             # module rotation constraints
-            output.write("z{} >= 0;\n".format(mod))
+            output.write("z{} >= 0;\n".format(num))
             # chip width constraint
             output.write("x{} + {} - {} z{} + {} z{} <= y_star;\n"
-                         .format(mod, var.all_mod[mod - 1][1],
-                                 var.all_mod[mod - 1][1], mod,
-                                 var.all_mod[mod - 1][2], mod))
+                         .format(num, mod[1],
+                                 mod[1], num,
+                                 mod[2], num))
             # chip height constraint
             output.write("y{} + {} - {} z{} + {} z{} <= y_star;\n"
-                         .format(mod, var.all_mod[mod - 1][2],
-                                 var.all_mod[mod - 1][2], mod,
-                                 var.all_mod[mod - 1][1], mod))
-        elif (var.all_mod[mod - 1][0] == "soft"):
+                         .format(num, mod[2],
+                                 mod[2], num,
+                                 mod[1], num))
+        elif (mod[0] == "soft"):
             # module is a soft module
             # min and max width of soft module
-            output.write("{} <= w{} <= {};\n".format(var.all_mod[mod - 1][1],
-                         mod, var.all_mod[mod - 1][2]))
+            output.write("{} <= w{} <= {};\n".format(mod[1],
+                         num, mod[2]))
             # min and max height of soft module
-            output.write("{} <= h{} <= {};\n".format(var.all_mod[mod - 1][5],
-                         mod, var.all_mod[mod - 1][6]))
+            output.write("{} <= h{} <= {};\n".format(mod[5],
+                         num, mod[6]))
             # relationship between width and height
-            output.write("h{} = {} w{} + {};\n".format(mod, var.all_mod[mod - 1][3],
-                         mod, var.all_mod[mod - 1][4]))
+            output.write("h{} = {} w{} + {};\n".format(num, mod[3],
+                         num, mod[4]))
             # module rotation constraints
-            output.write("z{} = 0;\n".format(mod))
+            output.write("z{} = 0;\n".format(num))
             # chip width constraint
-            output.write("x{} + w{} <= y_star;\n".format(mod, mod))
+            output.write("x{} + w{} <= y_star;\n".format(num, num))
             # chip height constraint
-            output.write("y{} + h{} <= y_star;\n".format(mod, mod))
+            output.write("y{} + h{} <= y_star;\n".format(num, num))
+        num += 1 # increment module number
     output.write("\n") # add a new line for readability
     
     output.write("/* Non-overlap constraints */\n")
-    for mod in range(var.mod_num):
+    index = 0
+    for index in range(len(chunk)):
         # for all modules
-        m = mod + 1 # number of starting module
+        m = index + 1 # number of starting module
         n = m + 1 # number of subsequent module
-        while n <= var.mod_num:
+        while n <= len(chunk):
             # variable assignments for hard and soft modules
             # module m
-            if (var.all_mod[m - 1][0] == "hard"):
-                width_m = var.all_mod[m - 1][1]
-                width_z_m = ("{} z{}".format(var.all_mod[m - 1][1], m))
-                height_m = var.all_mod[m - 1][2]
-                height_z_m = ("{} z{}".format(var.all_mod[m - 1][2], m))
-            elif (var.all_mod[m - 1][0] == "soft"):
+            if (chunk[m - 1][0] == "hard") and (final_lp == True):
+                width_m = chunk[m - 1][1]
+                width_z_m = 0
+                height_m = chunk[m - 1][2]
+                height_z_m = 0
+            elif (chunk[m - 1][0] == "hard"):
+                width_m = chunk[m - 1][1]
+                width_z_m = ("{} z{}".format(chunk[m - 1][1], m))
+                height_m = chunk[m - 1][2]
+                height_z_m = ("{} z{}".format(chunk[m - 1][2], m))
+            elif (chunk[m - 1][0] == "soft"):
                 width_m = ("w{}".format(m))
                 width_z_m = 0
                 height_m = ("h{}".format(m))
                 height_z_m = 0
             # module n
-            if (var.all_mod[n - 1][0] == "hard"):
-                width_n = var.all_mod[n - 1][1]
-                width_z_n = ("{} z{}".format(var.all_mod[n - 1][1], n))
-                height_n = var.all_mod[n - 1][2]
-                height_z_n = ("{} z{}".format(var.all_mod[n - 1][2], n))
-            elif (var.all_mod[n - 1][0] == "soft"):
+            if (chunk[n - 1][0] == "hard") and (final_lp == True):
+                width_n = chunk[n - 1][1]
+                width_z_n = 0
+                height_n = chunk[n - 1][2]
+                height_z_n = 0
+            elif (chunk[n - 1][0] == "hard"):
+                width_n = chunk[n - 1][1]
+                width_z_n = ("{} z{}".format(chunk[n - 1][1], n))
+                height_n = chunk[n - 1][2]
+                height_z_n = ("{} z{}".format(chunk[n - 1][2], n))
+            elif (chunk[n - 1][0] == "soft"):
                 width_n = ("w{}".format(n))
                 width_z_n = 0
                 height_n = ("h{}".format(n))
@@ -196,18 +209,18 @@ def generate_lp():
     
     output.write("/* Variable type constraints */\n")
     # continuous integer constraints
-    for mod in range(1, var.mod_num + 1):
+    for mod in range(1, len(chunk) + 1):
         next_mod = mod + 1 # number of the next module
-        if (var.all_mod[mod - 1][0] == "hard"):
+        if (chunk[mod - 1][0] == "hard"):
             output.write("bin z{};\n".format(mod))
     output.write("bin ") # relative position constraints
-    for mod in range(1, var.mod_num - 1):
+    for mod in range(1, len(chunk) - 1):
         # for each module except the last two
         next_mod = mod + 1 # number of the next module
-        while next_mod <= var.mod_num:
+        while next_mod <= len(chunk):
             # binary constraints for hard modules
             output.write("x{}_{}, y{}_{}, ".format(mod, next_mod, mod, next_mod))
             next_mod = next_mod + 1 # increment next module
     output.write("x{}_{}, y{}_{};\n"
-                 .format(var.mod_num - 1, var.mod_num, var.mod_num - 1, 
-                         var.mod_num))
+                 .format(len(chunk) - 1, len(chunk), len(chunk) - 1, 
+                         len(chunk)))

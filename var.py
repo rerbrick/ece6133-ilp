@@ -17,9 +17,15 @@ def init():
     #                  min_height, max_height, area]
     global all_mod # list of all modules
     all_mod = []
-    global all_mod_scaled # list of scaled modules
-    all_mod_scaled = []
+    
+    # hard modules = ["hard", width, height]
+    global mod_chunks # list of chunks of modules
+    mod_chunks = []
     
     # overestimation or underestimation
     global overestimate
     overestimate = False
+    
+    # list of all modules in all chunks
+    global big_list
+    big_list = []
