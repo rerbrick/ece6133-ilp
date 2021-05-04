@@ -117,9 +117,9 @@ def main():
     # plot all the modules
     plotthing(var.big_list, var.all_mod, final_list)
     # print final width, height, and area to console
-    print("Chip Width: {}\n".format(final_list[0]))
-    print("Chip Height: {}\n".format(final_list[0]))
-    print("Chip Area: {}\n".format(final_list[0] ** 2))
+    print("Chip Width: {}".format(final_list[0]))
+    print("Chip Height: {}".format(final_list[0]))
+    print("Chip Area: {}".format(final_list[0] ** 2))
     
     
 if __name__ == "__main__":
