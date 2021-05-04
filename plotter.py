@@ -23,14 +23,21 @@ def plotthing(mylist):
             print((mylist[4+(5*counter)], mylist[5+(5*counter)],mylist[2+(5*counter)], mylist[1+(5*counter)])," rotate")
         ax1.add_patch(rect1)
         counter = counter+1
-        
+
 
     for n in range(var.soft_num):
         rect1=patches.Rectangle((mylist[4+(5*counter)], mylist[5+(5*counter)]), mylist[1+(5*counter)], var.all_mod[counter][7]/mylist[1+(5*counter)],facecolor='orange',edgecolor='black')
         print((mylist[4+(5*counter)], mylist[5+(5*counter)],mylist[1+(5*counter)], mylist[2+(5*counter)])," soft module")
         ax1.add_patch(rect1)
+        if(var.all_mod[counter][7]/mylist[1+(5*counter)]>ymax):
+            ymax=var.all_mod[counter][7]/mylist[1+(5*counter)]+mylist[5+(5*counter)]
         counter = counter+1
+
+    if(ymax>mylist[0]):
+        plt.ylim(0,ymax)
+    else:
+        plt.ylim(0,mylist[0])
+
     plt.xlim(0,mylist[0])
-    plt.ylim(0,mylist[0])
     plt.show()
 
